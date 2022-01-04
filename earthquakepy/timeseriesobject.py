@@ -57,4 +57,4 @@ class TimeSeries:
         '''
         Units for Time component
         '''
-        self.TUnit = unit
+        self.tUnit = unit
