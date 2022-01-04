@@ -36,7 +36,7 @@ def readPEER(pathToFile):
     th.set_eqDate(eqDate)
     th.set_recordStation(recordStation)
     th.set_component(component)
-    th.set_dt = (dt)
+    th.set_dt(dt)
     th.set_Yunit(Yunit)
     th.set_Tunit('seconds')
     return th
