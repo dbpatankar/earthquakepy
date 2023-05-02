@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.integrate._ivp.ivp import OdeResult
-from scipy.fftpack import ifft, fft, fftfreq
+from scipy.fftpack import irfft, rfft, rfftfreq
 import matplotlib.pyplot as plt
 
 
@@ -120,8 +120,8 @@ class Sdof:
 
         N = len(f)
         dt = ts.dt  # sampling interval
-        F = fft(f)
-        freq = fftfreq(N, dt)  # [:N//2]
+        F = rfft(f)
+        freq = rfftfreq(N, dt)  # [:N//2]
 
         H = self.get_frequency_response(w=2*np.pi*freq)
 
@@ -129,7 +129,7 @@ class Sdof:
         V = 2*np.pi*freq * X  # Should it be multiplied by complex(0, 1)?
         A = 2*np.pi*freq * V  # Should it be multiplied by complex(0, 1)?
 
-        return ts.t, ifft(X), ifft(V), ifft(A)
+        return ts.t, irfft(X), irfft(V), irfft(A)
 
     def get_response(self, ts, tsType="baseExcitation", **kwargs):
         r"""

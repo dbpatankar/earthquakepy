@@ -4,7 +4,7 @@ from scipy.integrate import trapz, cumtrapz
 import matplotlib.pyplot as plt
 # import matplotlib as mpl
 from earthquakepy.singledof import Sdof  # , SdofNL
-from scipy.fftpack import fft, fftfreq
+from scipy.fftpack import rfft, rfftfreq
 
 np.set_printoptions(threshold=50)
 
@@ -162,9 +162,9 @@ class TimeSeries:
         """Compute fourier spectrum associated with the time series."""
         N = self.npts
         T = self.dt  # sampling interval
-        yf = fft(self.y)
+        yf = rfft(self.y)
         # FAmp = np.abs(yf[0:N//2])
-        freq = fftfreq(N, T)  # [:N//2]
+        freq = rfftfreq(N, T)  # [:N//2]
         return FourierSpectrum(freq, yf, N)
 
     def get_power_spectrum(self):
