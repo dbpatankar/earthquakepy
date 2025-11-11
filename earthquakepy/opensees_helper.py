@@ -30,7 +30,7 @@ def read_ops_node_output(filename, ncomps, nodeTags=[], compNames=[], **kwargs):
     return OpenSeesNodeOutput(filename, ncomps, nodeTags, compNames, **kwargs)
 
 
-def read_ops_element_output(filename, ncomps, elmTags=[], compNames=[], **kwarga):
+def read_ops_element_output(filename, ncomps, elmTags=[], compNames=[], **kwargs):
     """
     Read opensees generated element output file.
 
