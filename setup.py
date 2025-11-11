@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-from setuptools import setup
 from pathlib import Path
+from setuptools import setup
 this_directory = Path(__file__).parent
 
 setup(
     name="earthquakepy",
-    version="0.3.10",
+    version="0.4.1",
     description="python library for earthquake engineers.",
     long_description = (this_directory / "README.md").read_text(),
     long_description_content_type="text/markdown",
@@ -17,7 +17,7 @@ setup(
     packages=["earthquakepy"],
     install_requires=[
         "numpy",
-        "scipy",
+        "scipy>=1.14.1",
         "matplotlib",
     ],
     python_requires=">=3.6",
