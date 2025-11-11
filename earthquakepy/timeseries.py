@@ -1,10 +1,10 @@
 """Define various classes to store timeseries and similar objects."""
 import numpy as np
-from scipy.integrate import trapz, cumtrapz
+from scipy.integrate import trapezoid, cumulative_trapezoid
+from scipy.fftpack import rfft, rfftfreq
 import matplotlib.pyplot as plt
 # import matplotlib as mpl
 from earthquakepy.singledof import Sdof  # , SdofNL
-from scipy.fftpack import rfft, rfftfreq
 
 np.set_printoptions(threshold=50)
 
@@ -25,7 +25,7 @@ class TimeSeries:
         t: (scalar or 1D array) time step (if scalar) or time axis (if 1D array)
         y: (1D array) ordinates
         """
-        if type(t) in [int, float, np.int_, np.float_]:
+        if type(t) in [int, float, np.int_, np.float64]:
             t = np.arange(t, len(y) * t + 0.1 * t, t)
         self.t = t
         self.y = y
@@ -229,14 +229,14 @@ class TimeSeries:
         Scalar
 
         """
-        from scipy.integrate import trapz
+        from scipy.integrate import trapezoid
 
         power_spectrum = self.get_power_spectrum()
         freq = power_spectrum.frequencies
         powerAmp = power_spectrum.amplitude
-        m0 = trapz(powerAmp, freq)
-        m2 = trapz(powerAmp * freq**2, freq)
-        m4 = trapz(powerAmp * freq**4, freq)
+        m0 = trapezoid(powerAmp, freq)
+        m2 = trapezoid(powerAmp * freq**2, freq)
+        m4 = trapezoid(powerAmp * freq**4, freq)
         eps = np.sqrt(1 - m2**2 / (m0 * m4))
         return eps
 
@@ -261,7 +261,7 @@ class TimeSeries:
         if g:
             acc = acc * 9.81
 
-        iaSeries = np.pi / (2 * 9.81) * cumtrapz(acc**2, dx=dt, initial=0)
+        iaSeries = np.pi / (2 * 9.81) * cumulative_trapezoid(acc**2, dx=dt, initial=0)
         return iaSeries
 
     def get_total_arias(self, g=False):
@@ -285,7 +285,7 @@ class TimeSeries:
         if g:
             acc = acc * 9.81
 
-        ia = np.pi / (2 * 9.81) * trapz(acc**2, dx=dt)
+        ia = np.pi / (2 * 9.81) * trapezoid(acc**2, dx=dt)
         return ia
 
     def get_sig_duration(self, g=False, start=0.05, stop=0.95):
@@ -357,7 +357,7 @@ class TimeSeries:
         if g:
             acc = acc * 9.81
         acc = np.absolute(acc)
-        return trapz(acc, dx=dt)
+        return trapezoid(acc, dx=dt)
 
     def get_cum_abs_disp(self):
         """
@@ -379,7 +379,7 @@ class TimeSeries:
         vel = self.y
         dt = self.dt
         vel = np.absolute(vel)
-        return trapz(vel, dx=dt)
+        return trapezoid(vel, dx=dt)
 
     def get_specific_energy(self):
         """
@@ -400,7 +400,7 @@ class TimeSeries:
         """
         vel = self.y
         dt = self.dt
-        return trapz(vel**2, dx=dt)
+        return trapezoid(vel**2, dx=dt)
 
     def get_rms(self, g=False):
         """
@@ -420,7 +420,7 @@ class TimeSeries:
         val = self.y
         total_time = self.duration
         dt = self.dt
-        return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)
+        return np.sqrt(trapezoid(val**2, dx=dt) * total_time**-1)
 
     def get_diff(self, edge_order=1):
         """
@@ -438,11 +438,11 @@ class TimeSeries:
 
     def get_int(self, **kwargs):
         """
-        Integrate the time series with respect to 't' (default) using numpy.trapz() internally.
+        Integrate the time series with respect to 't' (default) using numpy.trapezoid() internally.
 
         Parameters
         ----------
-        All **kwargs supported by numpy.trapz()
+        All **kwargs supported by numpy.trapezoid()
 
         Returns
         -------
@@ -450,7 +450,7 @@ class TimeSeries:
         """
         defaultArgs = {"x": self.t}
         kwargs = {**defaultArgs, **kwargs}
-        return np.trapz(self.y, **kwargs)
+        return np.trapezoid(self.y, **kwargs)
 
     def get_numerical_int(self, init=0.0, **kwargs):
         """
@@ -652,7 +652,7 @@ class PowerSpectrum:
         N = self.N // 2
         amp = self.amplitude[0:N]
         freq = self.frequencies[0:N]
-        return np.trapz(freq**n * amp, x=freq)
+        return np.trapezoid(freq**n * amp, x=freq)
 
     def get_compatible_timehistories(self, m=5):
         """
